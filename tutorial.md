@@ -1,5 +1,4 @@
 ---
-theme: dark
 author: deck
 date: 2025
 paging: Slide %d / %d
@@ -16,14 +15,14 @@ A terminal slide presenter built with Bubbletea v2.
 
 | Key | Action |
 |-----|--------|
-| `→` `l` `space` | Next slide |
-| `←` `h` | Previous slide |
+| `l` `space` `right` | Next slide |
+| `h` `left` | Previous slide |
 | `j` / `k` | Next / Previous |
 | `gg` | First slide |
 | `G` | Last slide |
 | `3G` | Go to slide 3 |
 | `/` | Search |
-| `q` `esc` | Quit |
+| `q` | Quit |
 
 ---
 
@@ -59,11 +58,6 @@ Press `ctrl+e` to execute code blocks.
 
 Content can be revealed incrementally:
 
-asdfassdfasdf
-
-
-dsafsdga
-
 <!-- pause -->
 
 First, this appears...
@@ -86,8 +80,6 @@ And finally, the conclusion.
 ### Left Column
 
 This content appears on the left side of the slide.
-
-asdfas
 
 <!-- column: 1 -->
 
@@ -116,10 +108,6 @@ Edit your slides file and deck will:
 1. Detect the change instantly
 2. Re-parse the presentation
 3. Jump to the modified slide
-
-
-
-asdfas
 
 No restart needed!
 

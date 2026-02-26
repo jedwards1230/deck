@@ -16,7 +16,6 @@ func TestParseFrontmatter(t *testing.T) {
 		{
 			name: "valid frontmatter with all fields",
 			input: `---
-theme: dark
 author: Jane Doe
 date: 2025-01-15
 paging: Page %d of %d
@@ -24,7 +23,6 @@ footer: My Presentation
 ---
 # Hello World`,
 			wantFM: model.Frontmatter{
-				Theme:  "dark",
 				Author: "Jane Doe",
 				Date:   "2025-01-15",
 				Paging: "Page %d of %d",
@@ -42,11 +40,11 @@ footer: My Presentation
 		},
 		{
 			name:  "only opening delimiter no closing",
-			input: "---\ntheme: dark\n# Slide content",
+			input: "---\nauthor: Test\n# Slide content",
 			wantFM: model.Frontmatter{
 				// No closing ---, so frontmatter is not parsed.
 			},
-			wantRemaining: "---\ntheme: dark\n# Slide content",
+			wantRemaining: "---\nauthor: Test\n# Slide content",
 		},
 		{
 			name:  "empty frontmatter block",
@@ -82,11 +80,11 @@ Content`,
 		{
 			name: "leading whitespace before frontmatter",
 			input: `  ---
-theme: light
+author: Jane
 ---
 After`,
 			wantFM: model.Frontmatter{
-				Theme:  "light",
+				Author: "Jane",
 				Paging: "Slide %d / %d",
 			},
 			wantRemaining: "After",
@@ -102,10 +100,10 @@ After`,
 		{
 			name: "frontmatter with no remaining content",
 			input: `---
-theme: dark
+author: Test
 ---`,
 			wantFM: model.Frontmatter{
-				Theme:  "dark",
+				Author: "Test",
 				Paging: "Slide %d / %d",
 			},
 			wantRemaining: "",
@@ -116,9 +114,6 @@ theme: dark
 		t.Run(tt.name, func(t *testing.T) {
 			gotFM, gotRemaining := ParseFrontmatter(tt.input)
 
-			if gotFM.Theme != tt.wantFM.Theme {
-				t.Errorf("Theme = %q, want %q", gotFM.Theme, tt.wantFM.Theme)
-			}
 			if gotFM.Author != tt.wantFM.Author {
 				t.Errorf("Author = %q, want %q", gotFM.Author, tt.wantFM.Author)
 			}

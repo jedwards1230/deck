@@ -8,7 +8,6 @@ type Presentation struct {
 
 // Frontmatter holds YAML metadata from the slide file header.
 type Frontmatter struct {
-	Theme  string `yaml:"theme"`
 	Author string `yaml:"author"`
 	Date   string `yaml:"date"`
 	Paging string `yaml:"paging"`

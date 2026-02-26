@@ -18,7 +18,6 @@ func TestParsePresentation(t *testing.T) {
 		{
 			name: "full presentation with frontmatter and slides",
 			input: `---
-theme: dark
 author: Test Author
 paging: "%d / %d"
 ---
@@ -35,7 +34,6 @@ Details here.
 The end.`,
 			wantSlideCount: 3,
 			wantFM: model.Frontmatter{
-				Theme:  "dark",
 				Author: "Test Author",
 				Paging: "%d / %d",
 			},
@@ -213,11 +211,11 @@ Right side
 		{
 			name: "frontmatter only no slides after",
 			input: `---
-theme: minimal
+author: minimal
 ---`,
 			wantSlideCount: 0,
 			wantFM: model.Frontmatter{
-				Theme:  "minimal",
+				Author: "minimal",
 				Paging: "Slide %d / %d",
 			},
 			check: nil,
@@ -250,9 +248,6 @@ No frontmatter here.`,
 				t.Fatalf("slide count = %d, want %d", len(p.Slides), tt.wantSlideCount)
 			}
 
-			if p.Frontmatter.Theme != tt.wantFM.Theme {
-				t.Errorf("Frontmatter.Theme = %q, want %q", p.Frontmatter.Theme, tt.wantFM.Theme)
-			}
 			if p.Frontmatter.Author != tt.wantFM.Author {
 				t.Errorf("Frontmatter.Author = %q, want %q", p.Frontmatter.Author, tt.wantFM.Author)
 			}

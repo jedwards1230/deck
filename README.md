@@ -31,7 +31,6 @@ Slides are separated by `---` on its own line. YAML frontmatter is optional:
 
 ```markdown
 ---
-theme: dark
 author: Your Name
 date: 2025
 paging: "%d / %d"
