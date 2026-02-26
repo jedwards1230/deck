@@ -1,0 +1,173 @@
+# Release pipeline: tag, build cross-platform binaries, create GitHub release.
+# Adapted from hagen's release workflow with bump_type choice + version_override.
+name: Release
+
+run-name: "Release ${{ inputs.version_override || format('{0} bump', inputs.bump_type) }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: "Version bump type"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      version_override:
+        description: "Override version (e.g. 1.2.3) - ignores bump_type"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Tag & Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - name: Compute next version
+        id: version
+        run: |
+          LATEST_TAG=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | sort -V | tail -n1 || true)
+
+          if [ -z "$LATEST_TAG" ]; then
+            PREV_REF=$(git rev-list --max-parents=0 HEAD)
+            MAJOR=0; MINOR=0; PATCH=0
+            echo "No existing tags, starting from 0.0.0"
+          else
+            PREV_REF="$LATEST_TAG"
+            LATEST_VERSION="${LATEST_TAG#v}"
+            MAJOR=$(echo "$LATEST_VERSION" | cut -d. -f1)
+            MINOR=$(echo "$LATEST_VERSION" | cut -d. -f2)
+            PATCH=$(echo "$LATEST_VERSION" | cut -d. -f3)
+            echo "Latest tag: $LATEST_TAG"
+          fi
+
+          OVERRIDE="${{ inputs.version_override }}"
+          if [ -n "$OVERRIDE" ]; then
+            if ! echo "$OVERRIDE" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "::error::Invalid version format '$OVERRIDE'. Expected: X.Y.Z"
+              exit 1
+            fi
+            NEXT_VERSION="$OVERRIDE"
+          else
+            case "${{ inputs.bump_type }}" in
+              major) NEXT_VERSION="$((MAJOR + 1)).0.0" ;;
+              minor) NEXT_VERSION="${MAJOR}.$((MINOR + 1)).0" ;;
+              patch) NEXT_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))" ;;
+            esac
+          fi
+
+          NEXT_TAG="v${NEXT_VERSION}"
+
+          if git rev-parse "$NEXT_TAG" >/dev/null 2>&1; then
+            echo "::error::Tag $NEXT_TAG already exists"
+            exit 1
+          fi
+
+          echo "version=${NEXT_VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=${NEXT_TAG}" >> $GITHUB_OUTPUT
+          echo "prev_ref=${PREV_REF}" >> $GITHUB_OUTPUT
+          echo "Next version: $NEXT_VERSION (tag: $NEXT_TAG)"
+
+      - name: Build cross-platform binaries
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+          COMMIT=$(git rev-parse --short HEAD)
+          DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          LDFLAGS="-X github.com/jedwards1230/deck/internal/version.Version=${VERSION} \
+                   -X github.com/jedwards1230/deck/internal/version.Commit=${COMMIT} \
+                   -X github.com/jedwards1230/deck/internal/version.Date=${DATE}"
+
+          mkdir -p dist
+
+          platforms=(
+            "linux/amd64"
+            "linux/arm64"
+            "darwin/amd64"
+            "darwin/arm64"
+            "windows/amd64"
+          )
+
+          for platform in "${platforms[@]}"; do
+            GOOS="${platform%/*}"
+            GOARCH="${platform#*/}"
+            output="deck-${GOOS}-${GOARCH}"
+            if [ "$GOOS" = "windows" ]; then
+              output="${output}.exe"
+            fi
+
+            echo "Building ${GOOS}/${GOARCH}..."
+            GOOS=$GOOS GOARCH=$GOARCH go build -ldflags "$LDFLAGS" -o "dist/${output}" .
+          done
+
+          ls -lh dist/
+
+      - name: Create and push tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.version }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          PREV_REF="${{ steps.version.outputs.prev_ref }}"
+
+          git log --pretty=format:"- %s (%h)" "${PREV_REF}..${TAG}" > /tmp/commits.txt
+          COMPARE_URL="https://github.com/${{ github.repository }}/compare/${PREV_REF}...${TAG}"
+
+          cat > /tmp/release_body.md <<EOF
+          ## What's Changed
+
+          $(cat /tmp/commits.txt)
+
+          **Full Changelog**: ${COMPARE_URL}
+          EOF
+
+          # Strip leading whitespace from heredoc
+          sed -i 's/^          //' /tmp/release_body.md
+
+      - name: Create GitHub Release
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            dist/* \
+            --repo "${{ github.repository }}" \
+            --title "Release ${{ steps.version.outputs.version }}" \
+            --notes-file /tmp/release_body.md \
+            --latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Write workflow summary
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          echo "## Release $TAG" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ steps.version.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag | $TAG |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bump Type | ${{ inputs.bump_type }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Binaries" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          ls -lh dist/ >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
