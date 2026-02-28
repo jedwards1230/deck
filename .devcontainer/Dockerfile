@@ -28,7 +28,8 @@ RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/ins
     | sh -s -- -b /usr/local/bin "${GOLANGCI_LINT_VERSION}"
 
 # Install yq (YAML processor)
-RUN curl -fsSL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
+ARG YQ_VERSION=v4.52.4
+RUN curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" \
     -o /usr/local/bin/yq && chmod +x /usr/local/bin/yq
 
 WORKDIR /workspace

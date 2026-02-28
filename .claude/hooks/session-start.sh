@@ -6,7 +6,7 @@
 # In Claude Code Web, each session starts from an ephemeral container,
 # so tools must be installed here.
 
-set -euo pipefail
+set +e  # Never exit on error in session-start
 
 GO_VERSION="1.26.0"
 GOLANGCI_LINT_VERSION="v2.10.1"
@@ -19,17 +19,15 @@ case "$ARCH" in
 esac
 
 if [ "${CLAUDE_CODE_REMOTE:-}" = "true" ]; then
-  echo "[hook:session-start] Running in Claude Code Web (ephemeral container)"
+  echo "[session-start] Running in Claude Code Web (ephemeral container)" >&2
 
-  # Install Go if not present or wrong version
+  # Install Go if not present
   if ! command -v go &>/dev/null; then
-    echo "[hook:session-start] Installing Go ${GO_VERSION}..."
+    echo "[session-start] Installing Go ${GO_VERSION}..." >&2
     curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-${GOARCH}.tar.gz" \
       | tar -C /usr/local -xz
     export PATH="/usr/local/go/bin:$PATH"
-    echo 'export PATH="/usr/local/go/bin:$PATH"' >> /etc/profile.d/go.sh
-  else
-    echo "[hook:session-start] Go already installed: $(go version)"
+    echo 'export PATH="/usr/local/go/bin:/root/go/bin:$PATH"' >> ~/.bashrc
   fi
 
   # Ensure GOPATH/bin is on PATH
@@ -38,21 +36,19 @@ if [ "${CLAUDE_CODE_REMOTE:-}" = "true" ]; then
 
   # Install golangci-lint if not present
   if ! command -v golangci-lint &>/dev/null; then
-    echo "[hook:session-start] Installing golangci-lint ${GOLANGCI_LINT_VERSION}..."
+    echo "[session-start] Installing golangci-lint ${GOLANGCI_LINT_VERSION}..." >&2
     curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
-      | sh -s -- -b "$GOPATH/bin" "$GOLANGCI_LINT_VERSION"
-  else
-    echo "[hook:session-start] golangci-lint already installed: $(golangci-lint --version 2>&1 | head -1)"
+      | sh -s -- -b "$GOPATH/bin" "$GOLANGCI_LINT_VERSION" >/dev/null 2>&1
   fi
 
   # Download module dependencies
   if [ -f "${CLAUDE_PROJECT_DIR}/go.mod" ]; then
-    echo "[hook:session-start] Downloading Go modules..."
-    cd "${CLAUDE_PROJECT_DIR}" && go mod download 2>&1 | tail -5 || true
+    echo "[session-start] Downloading Go modules..." >&2
+    cd "${CLAUDE_PROJECT_DIR}" && go mod download 2>/dev/null || true
   fi
 else
-  echo "[hook:session-start] Running in local devcontainer — tools pre-installed"
+  echo "[session-start] Running in local devcontainer — tools pre-installed" >&2
 fi
 
-echo "[hook:session-start] Done"
+echo "[session-start] Done" >&2
 exit 0

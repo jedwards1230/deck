@@ -24,6 +24,7 @@
       }
     }
   },
+  "postStartCommand": "bash .devcontainer/entrypoint.sh",
   "remoteUser": "root",
   "features": {}
 }
