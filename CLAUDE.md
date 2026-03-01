@@ -84,6 +84,6 @@ Hooks are configured in `.claude/hooks/`.
 - `session-start.sh` — Installs Go and golangci-lint in Claude Code Web ephemeral containers.
 - `pre-tool-use.sh` — Logs tool calls for auditing.
 - `post-tool-use.sh` — Runs `gofmt` on any `.go` files modified by the Write or Edit tools.
-- `stop.sh` — Runs `go vet ./...` and `golangci-lint run ./...` after each Claude response.
+- `stop.sh` — Runs `go vet ./...` and `golangci-lint run ./...` after each Claude response; exits 2 on issues (blocking).
 - `subagent-stop.sh` — Stub for subagent coordination.
 - `session-end.sh` — Stub for session cleanup.

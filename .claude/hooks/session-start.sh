@@ -27,7 +27,9 @@ if [ "${CLAUDE_CODE_REMOTE:-}" = "true" ]; then
     curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-${GOARCH}.tar.gz" \
       | tar -C /usr/local -xz
     export PATH="/usr/local/go/bin:$PATH"
-    echo 'export PATH="/usr/local/go/bin:/root/go/bin:$PATH"' >> ~/.bashrc
+    if ! grep -qF 'export PATH="/usr/local/go/bin:/root/go/bin:$PATH"' ~/.bashrc 2>/dev/null; then
+      echo 'export PATH="/usr/local/go/bin:/root/go/bin:$PATH"' >> ~/.bashrc
+    fi
   fi
 
   # Ensure GOPATH/bin is on PATH
@@ -37,7 +39,7 @@ if [ "${CLAUDE_CODE_REMOTE:-}" = "true" ]; then
   # Install golangci-lint if not present
   if ! command -v golangci-lint &>/dev/null; then
     echo "[session-start] Installing golangci-lint ${GOLANGCI_LINT_VERSION}..." >&2
-    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
+    curl -sSfL "https://raw.githubusercontent.com/golangci/golangci-lint/${GOLANGCI_LINT_VERSION}/install.sh" \
       | sh -s -- -b "$GOPATH/bin" "$GOLANGCI_LINT_VERSION" >/dev/null 2>&1
   fi
 
