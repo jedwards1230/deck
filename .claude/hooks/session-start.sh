@@ -9,7 +9,7 @@
 set +e  # Never exit on error in session-start
 
 GO_VERSION="1.26.0"
-GOLANGCI_LINT_VERSION="v2.10.1"
+GOLANGCI_LINT_VERSION="v2.11.3"
 ARCH="$(uname -m)"
 case "$ARCH" in
   x86_64)  GOARCH="amd64" ;;
@@ -36,11 +36,24 @@ if [ "${CLAUDE_CODE_REMOTE:-}" = "true" ]; then
   export GOPATH="${GOPATH:-/root/go}"
   export PATH="$GOPATH/bin:$PATH"
 
-  # Install golangci-lint if not present
+  # Install golangci-lint if not present (download binary + verify checksum)
   if ! command -v golangci-lint &>/dev/null; then
     echo "[session-start] Installing golangci-lint ${GOLANGCI_LINT_VERSION}..." >&2
-    curl -sSfL "https://raw.githubusercontent.com/golangci/golangci-lint/${GOLANGCI_LINT_VERSION}/install.sh" \
-      | sh -s -- -b "$GOPATH/bin" "$GOLANGCI_LINT_VERSION" >/dev/null 2>&1
+    _lint_ver="${GOLANGCI_LINT_VERSION#v}"
+    _lint_tar="golangci-lint-${_lint_ver}-linux-${GOARCH}.tar.gz"
+    _lint_url="https://github.com/golangci/golangci-lint/releases/download/${GOLANGCI_LINT_VERSION}"
+    _tmp="$(mktemp -d)"
+    curl -fsSL "${_lint_url}/${_lint_tar}" -o "${_tmp}/${_lint_tar}"
+    curl -fsSL "${_lint_url}/golangci-lint-${_lint_ver}-checksums.txt" -o "${_tmp}/checksums.txt"
+    (cd "${_tmp}" && grep "${_lint_tar}" checksums.txt | sha256sum -c --status)
+    if [ $? -eq 0 ]; then
+      tar -C "${_tmp}" -xzf "${_tmp}/${_lint_tar}"
+      mv "${_tmp}/golangci-lint-${_lint_ver}-linux-${GOARCH}/golangci-lint" "$GOPATH/bin/golangci-lint"
+    else
+      echo "[session-start] golangci-lint checksum verification failed — skipping install" >&2
+    fi
+    rm -rf "${_tmp}"
+    unset _lint_ver _lint_tar _lint_url _tmp
   fi
 
   # Download module dependencies

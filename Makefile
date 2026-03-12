@@ -8,7 +8,7 @@ LDFLAGS  = -X github.com/jedwards1230/deck/internal/version.Version=$(VERSION) \
            -X github.com/jedwards1230/deck/internal/version.Date=$(DATE)
 
 run:
-	go run . examples/slides.md
+	go run . examples/demo.md
 
 build:
 	go build -ldflags "$(LDFLAGS)" -o deck .

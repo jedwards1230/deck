@@ -32,6 +32,9 @@
     ],
     "deny": []
   },
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true
+  },
   "hooks": {
     "SessionStart": [
       {
