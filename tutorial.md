@@ -2,7 +2,6 @@
 author: deck
 date: 2025
 paging: Slide %d / %d
-permalink: services/deck/tutorial
 ---
 
 # Welcome to Deck

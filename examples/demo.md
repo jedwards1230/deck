@@ -1,7 +1,6 @@
 ---
 author: Demo
 date: 2025
-permalink: services/deck/examples/demo
 ---
 
 # deck

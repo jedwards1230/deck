@@ -5,9 +5,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/atotto/clipboard"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
+	"github.com/atotto/clipboard"
 
 	"github.com/jedwards1230/deck/internal/code"
 	"github.com/jedwards1230/deck/internal/diff"
@@ -33,6 +33,10 @@ type Model struct {
 	searching   bool
 	searchQuery string
 	lastSearch  string // persisted for n/N repeat
+
+	// code execution confirmation state
+	confirming   bool
+	pendingBlock code.Block
 }
 
 // New creates a new Model from the given content.
@@ -91,6 +95,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) handleKeyPress(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	key := msg.String()
 
+	// Confirmation prompt takes priority
+	if m.confirming {
+		return m.handleConfirmInput(msg)
+	}
+
 	// Search mode input takes priority
 	if m.searching {
 		return m.handleSearchInput(msg)
@@ -119,7 +128,7 @@ func (m Model) handleKeyPress(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case "ctrl+e":
-		return m, m.executeCode()
+		return m.confirmExec()
 
 	case "y":
 		m.yankCode()
@@ -176,9 +185,9 @@ func (m *Model) jumpToSlide(idx int) {
 	m.state.ChunksInSlide = len(m.presentation.Slides[idx].Chunks)
 }
 
-func (m Model) executeCode() tea.Cmd {
+func (m Model) confirmExec() (tea.Model, tea.Cmd) {
 	if m.state.SlideIndex >= len(m.presentation.Slides) {
-		return nil
+		return m, nil
 	}
 
 	slide := m.presentation.Slides[m.state.SlideIndex]
@@ -186,16 +195,24 @@ func (m Model) executeCode() tea.Cmd {
 	blocks := code.ExtractBlocks(content)
 
 	if len(blocks) == 0 {
-		return nil
+		return m, nil
 	}
 
-	// Execute the last code block on the slide
-	block := blocks[len(blocks)-1]
+	m.pendingBlock = blocks[len(blocks)-1]
+	m.confirming = true
+	return m, nil
+}
 
-	return func() tea.Msg {
-		output, err := code.Execute(block)
-		return CodeResultMsg{Output: output, Err: err}
+func (m Model) handleConfirmInput(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
+	m.confirming = false
+	if msg.String() == "y" {
+		return m, func() tea.Msg {
+			output, err := code.Execute(m.pendingBlock)
+			return CodeResultMsg{Output: output, Err: err}
+		}
 	}
+	m.pendingBlock = code.Block{}
+	return m, nil
 }
 
 func (m Model) yankCode() {
@@ -318,8 +335,11 @@ func (m Model) View() tea.View {
 		m.width,
 	)
 
-	// Search bar overlay
-	if m.searching {
+	// Overlay: confirmation prompt takes priority over search bar
+	if m.confirming {
+		prompt := fmt.Sprintf("Execute %s code block? [y/N] ", m.pendingBlock.Language)
+		footer = prompt + strings.Repeat(" ", max(0, m.width-lipgloss.Width(prompt))) + "\n"
+	} else if m.searching {
 		searchBar := fmt.Sprintf("/%s█", m.searchQuery)
 		footer = searchBar + strings.Repeat(" ", max(0, m.width-lipgloss.Width(searchBar))) + "\n"
 	}
