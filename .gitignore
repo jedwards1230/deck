@@ -2,3 +2,4 @@
 *.exe
 dist/
 coverage.out
+worktrees/
