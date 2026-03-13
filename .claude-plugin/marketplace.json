@@ -1,0 +1,17 @@
+{
+  "name": "jedwards1230-deck",
+  "owner": {
+    "name": "jedwards1230"
+  },
+  "metadata": {
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "deck",
+      "source": "./plugins/deck",
+      "description": "AI-assisted terminal slide presentation creation using the deck CLI",
+      "version": "1.0.0"
+    }
+  ]
+}
