@@ -1,4 +1,4 @@
-deck
+/deck
 *.exe
 dist/
 coverage.out

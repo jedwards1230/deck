@@ -1,0 +1,13 @@
+{
+  "name": "deck",
+  "version": "1.0.0",
+  "description": "AI-assisted terminal slide presentation creation using the deck CLI",
+  "author": "jedwards1230",
+  "skills": [
+    "skills/deck"
+  ],
+  "agents": [
+    "agents/deck-creator.md",
+    "agents/deck-editor.md"
+  ]
+}
