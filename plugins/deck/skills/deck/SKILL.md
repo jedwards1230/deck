@@ -1,32 +1,20 @@
 ---
 name: deck
-description: Use when creating, editing, or improving terminal slide presentations
-  with the deck CLI. Trigger phrases include "create a presentation", "make slides",
-  "write a deck", "deck presentation", "make me a slide deck", "add slides", "edit
-  my slides", "add progressive reveal", "add speaker notes", "column layout", "fix
-  my deck". Covers the full deck markdown format, all comment directives, frontmatter
-  options, and opinionated guidance on presentation structure.
+description: This skill should be used when creating, editing, or improving terminal
+  slide presentations in the deck CLI format. It applies when a user says "create
+  a presentation", "make me a slide deck", "write a deck about X", "add progressive
+  reveal to my slides", "add speaker notes", "fix my deck", "make slides", "column
+  layout", or asks about deck frontmatter or comment directives. Provides the complete
+  deck .md format specification, all comment directives (pause, column layout, speaker
+  notes), frontmatter options, presentation structure guidance, and an opinionated
+  workflow for drafting slides from brief to finished file.
 ---
 
 # deck Skill
 
-`deck` is a terminal slide presenter. Slides are written in Markdown, separated by `---`, and rendered in the terminal via `deck slides.md`.
+`deck` is a terminal slide presenter. Slides are written in Markdown, separated by `---`, and rendered in the terminal via `deck slides.md`. Install with `go install github.com/jedwards1230/deck@latest`.
 
-## Quick Start
-
-```bash
-# Install
-go install github.com/jedwards1230/deck@latest
-
-# Present a file
-deck slides.md
-
-# Pipe content
-cat slides.md | deck
-
-# Built-in tutorial
-deck
-```
+For presenter navigation keys and runtime behavior, see `references/presenter-reference.md`.
 
 ## File Format
 
@@ -147,24 +135,6 @@ Key components: ingress, services, storage.
 <!-- speaker_note: Mention the migration from NFS to Longhorn here. Expect questions about failover. -->
 ```
 
-## Navigation Keys
-
-For reference when presenting:
-
-| Key | Action |
-|-----|--------|
-| `l` `space` `→` `enter` | Next |
-| `h` `←` | Previous |
-| `j` / `k` | Forward / back |
-| `gg` | First slide |
-| `G` | Last slide |
-| `3G` | Jump to slide 3 |
-| `/` | Search |
-| `ctrl+n` / `N` | Next / previous search match |
-| `ctrl+e` | Execute code block |
-| `y` | Copy code to clipboard |
-| `q` | Quit |
-
 ## Code Execution
 
 Code blocks can be executed in-presentation with `ctrl+e`. Supported languages: Go, Bash, Python, JavaScript, Ruby.
@@ -177,11 +147,9 @@ echo "Hello from deck!"
 \```
 ```
 
-## Hot Reload
+When drafting a live demo slide, recommend a code execution block and add a speaker note reminding the presenter to test it before the talk: `<!-- speaker_note: Test this block with ctrl+e before presenting. -->`.
 
-When presenting a file, deck watches for changes and jumps to the modified slide automatically. Edit while presenting to iterate live.
-
----
+***
 
 ## Presentation Design Guidance
 
@@ -274,7 +242,7 @@ Questions?
 github.com/jedwards1230/deck
 ```
 
----
+***
 
 ## Workflow: Creating a Presentation
 

@@ -50,7 +50,7 @@ You are a specialist in creating terminal slide presentations using the `deck` C
 
 ## Standards Reference
 
-The `deck` skill contains the full format reference. Load it for:
+Refer to the `deck` skill for:
 - **Slide format**: `---` separators, YAML frontmatter fields, footer templates
 - **Comment directives**: `<!-- pause -->`, column layout, speaker notes
 - **Content guidance**: slide density, when to use each feature, common patterns
