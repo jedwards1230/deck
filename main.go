@@ -16,11 +16,38 @@ import (
 //go:embed tutorial.md
 var tutorial string
 
+const usage = `deck — terminal slide presenter
+
+Usage:
+  deck [file]           Present a markdown file
+  cat file | deck       Read slides from stdin
+  deck                  Show built-in tutorial
+
+Flags:
+  -h, --help            Show this help
+  -v, --version         Show version
+
+Keys (in-app):
+  l space right enter   Next        h left    Previous
+  j / k                 Fwd / Back  gg / G    First / Last
+  3G                    Go to 3     /         Search
+  ctrl+n / N            Next / prev match
+  ctrl+e                Execute code block
+  y                     Copy code   q         Quit
+
+See README.md for slide format, frontmatter, layouts, and reveal syntax.
+`
+
 func main() {
-	// Handle version flag
-	if len(os.Args) == 2 && (os.Args[1] == "--version" || os.Args[1] == "-v" || os.Args[1] == "version") {
-		fmt.Println("deck", version.Info())
-		return
+	if len(os.Args) == 2 {
+		switch os.Args[1] {
+		case "--version", "-v", "version":
+			fmt.Println("deck", version.Info())
+			return
+		case "--help", "-h", "help":
+			fmt.Print(usage)
+			return
+		}
 	}
 
 	content, filePath, err := loadContent()
