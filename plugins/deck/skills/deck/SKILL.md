@@ -132,7 +132,7 @@ Hidden from the rendered slide. For presenter reminders, talking points, or time
 
 Key components: ingress, services, storage.
 
-<!-- speaker_note: Mention the migration from NFS to Longhorn here. Expect questions about failover. -->
+<!-- speaker_note: Walk through the rollout timeline here. Expect questions about rollback. -->
 ```
 
 ## Code Execution
@@ -186,21 +186,21 @@ A good deck presentation follows a clear arc:
 
 **Step-by-step process:**
 ```markdown
-# Deployment Process
+# Release Process
 
-1. Build the image
-
-<!-- pause -->
-
-2. Push to registry
+1. Run tests
 
 <!-- pause -->
 
-3. Update the manifest
+2. Build artifact
 
 <!-- pause -->
 
-4. ArgoCD syncs automatically
+3. Update changelog
+
+<!-- pause -->
+
+4. Tag and publish
 ```
 
 **Before / after code:**

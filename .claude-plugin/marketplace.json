@@ -4,14 +4,14 @@
     "name": "jedwards1230"
   },
   "metadata": {
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "plugins": [
     {
       "name": "deck",
       "source": "./plugins/deck",
       "description": "AI-assisted terminal slide presentation creation using the deck CLI",
-      "version": "1.0.0"
+      "version": "1.0.1"
     }
   ]
 }
