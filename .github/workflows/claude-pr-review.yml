@@ -1,0 +1,24 @@
+# Claude PR review — calls the shared reusable workflow in
+# jedwards1230/release-workflows, which runs claude-code-action@v1 in Haiku
+# PR-review mode with the public jedwards1230-plugins marketplace + review-team
+# plugin enabled by default. The focus below is appended to the base prompt.
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+
+jobs:
+  review:
+    uses: jedwards1230/release-workflows/.github/workflows/claude-pr-review.yml@v1
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    with:
+      focus: |
+        deck is a single-binary Go TUI (Bubbletea v2) slide presenter.
+        - Go correctness: error handling, nil derefs, unchecked type assertions,
+          goroutine + fsnotify watcher lifecycle/leaks on hot reload.
+        - Bubbletea model Update correctness; message handling.
+        - No CGO (must stay cross-compilable); version via ldflags, not hardcoded.
+        - Code-block execution feature: command injection / unsafe exec.
+        Do NOT re-flag gofmt/golangci-lint findings — CI owns those.
