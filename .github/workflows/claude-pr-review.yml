@@ -31,4 +31,5 @@ jobs:
         - Bubbletea model Update correctness; message handling.
         - No CGO (must stay cross-compilable); version via ldflags, not hardcoded.
         - Code-block execution feature: command injection / unsafe exec.
+        - For plugin files (manifest, hooks, skills, agents, commands), use plugin-dev's plugin-validator / skill-reviewer agents.
         Do NOT re-flag gofmt/golangci-lint findings — CI owns those.
