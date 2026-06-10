@@ -22,6 +22,8 @@ jobs:
     with:
       extra_plugins: |
         plugin-dev@claude-plugins-official
+      extra_plugin_marketplaces: |
+        https://github.com/anthropics/claude-plugins-official.git
       focus: |
         deck is a single-binary Go TUI (Bubbletea v2) slide presenter.
         - Go correctness: error handling, nil derefs, unchecked type assertions,
