@@ -20,6 +20,10 @@ jobs:
     secrets:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     with:
+      extra_plugins: |
+        plugin-dev@claude-plugins-official
+      extra_plugin_marketplaces: |
+        https://github.com/anthropics/claude-plugins-official.git
       focus: |
         deck is a single-binary Go TUI (Bubbletea v2) slide presenter.
         - Go correctness: error handling, nil derefs, unchecked type assertions,
@@ -27,4 +31,5 @@ jobs:
         - Bubbletea model Update correctness; message handling.
         - No CGO (must stay cross-compilable); version via ldflags, not hardcoded.
         - Code-block execution feature: command injection / unsafe exec.
+        - For plugin files (manifest, hooks, skills, agents, commands), use plugin-dev's plugin-validator / skill-reviewer agents.
         Do NOT re-flag gofmt/golangci-lint findings — CI owns those.
