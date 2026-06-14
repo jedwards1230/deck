@@ -33,7 +33,7 @@ Key packages under `internal/`:
 | Package | Responsibility |
 |---------|---------------|
 | `app` | Root Bubbletea model, wires navigation, rendering, and key handling |
-| `model` | Slide data model and frontmatter parsing |
+| `model` | Slide data types (Slide, Chunk, Frontmatter, ColumnLayout) |
 | `parse` | Markdown parser — splits on `---` delimiters, extracts YAML frontmatter |
 | `render` | Glamour-based markdown renderer with lipgloss layout |
 | `nav` | Slide navigation state machine |
@@ -47,42 +47,18 @@ Data flow: `main.go` loads content from stdin or file path → `parse` splits sl
 
 ## Build Variables
 
-Version info is injected at build time via `-ldflags`:
-
-```bash
-go build -ldflags "-X github.com/jedwards1230/deck/internal/version.Version=v1.0.0 \
-                   -X github.com/jedwards1230/deck/internal/version.Commit=abc1234 \
-                   -X github.com/jedwards1230/deck/internal/version.Date=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-```
-
-`make build` handles this automatically.
+Version info (`Version`, `Commit`, `Date`) is injected into `internal/version` via `-ldflags` at build time. `make build` handles this automatically.
 
 ## Slide Format
 
-Slides are separated by `---`. Optional YAML frontmatter at the start of the file:
-
-```markdown
----
-author: Your Name
-date: 2025
-paging: "%d / %d"
----
-
-# Slide 1
-
-Content here.
-
----
-
-# Slide 2
-```
+See the README for slide format and frontmatter options. Parsing lives in `internal/parse`; frontmatter fields map to `internal/model.Frontmatter`.
 
 ## Hooks
 
 Hooks are configured in `.claude/hooks/`.
 
 - `session-start.sh` — Installs Go and golangci-lint in Claude Code Web ephemeral containers.
-- `pre-tool-use.sh` — Logs tool calls for auditing.
+- `pre-tool-use.sh` — Logs tool calls for auditing (only when `$CLAUDE_PROJECT_DIR` is set).
 - `post-tool-use.sh` — Runs `gofmt` on any `.go` files modified by the Write or Edit tools.
 - `stop.sh` — Runs `go vet ./...` and `golangci-lint run ./...` after each Claude response; exits 2 on issues (blocking).
 - `subagent-stop.sh` — Stub for subagent coordination.
