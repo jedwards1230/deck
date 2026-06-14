@@ -20,7 +20,7 @@ All business logic lives under `internal/`. The `main.go` entry point is intenti
 
 - Each sub-model implements `tea.Model` (`Init`, `Update`, `View`)
 - Messages are defined as unexported types in the package that produces them
-- Key bindings use `charm.land/bubbletea/v2` key handling
+- Key bindings match on `tea.KeyPressMsg` via `msg.String()` (e.g. `"q"`, `"ctrl+c"`)
 
 ### Adding a new internal package
 
