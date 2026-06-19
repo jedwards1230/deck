@@ -33,7 +33,8 @@
     "deny": []
   },
   "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": true
+    "gopls-lsp@claude-plugins-official": true,
+    "go-quality@jedwards1230-plugins": true
   },
   "hooks": {
     "SessionStart": [
@@ -80,5 +81,13 @@
         ]
       }
     ]
+  },
+  "extraKnownMarketplaces": {
+    "jedwards1230-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "jedwards1230/claude-plugins"
+      }
+    }
   }
 }
