@@ -22,6 +22,7 @@ jobs:
     with:
       extra_plugins: |
         plugin-dev@claude-plugins-official
+        go-quality@jedwards1230-plugins
       extra_plugin_marketplaces: |
         https://github.com/anthropics/claude-plugins-official.git
       focus: |
@@ -32,4 +33,5 @@ jobs:
         - No CGO (must stay cross-compilable); version via ldflags, not hardcoded.
         - Code-block execution feature: command injection / unsafe exec.
         - For plugin files (manifest, hooks, skills, agents, commands), use plugin-dev's plugin-validator / skill-reviewer agents.
+        - When the diff touches Go, prioritize the go-quality:go-reviewer agent for language-specific Go review.
         Do NOT re-flag gofmt/golangci-lint findings — CI owns those.
