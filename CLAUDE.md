@@ -4,10 +4,6 @@
 
 Terminal slide presenter built with [Bubbletea v2](https://charm.land/bubbletea). Present markdown files as navigable slide decks with live hot reload, progressive reveal, column layouts, code execution, and vim-style navigation.
 
-## Build, test & lint
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for build, run, test, and lint commands.
-
 ## Architecture
 
 `deck` is a single-binary TUI application with no server component.
