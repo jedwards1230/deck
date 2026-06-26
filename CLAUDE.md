@@ -4,27 +4,9 @@
 
 Terminal slide presenter built with [Bubbletea v2](https://charm.land/bubbletea). Present markdown files as navigable slide decks with live hot reload, progressive reveal, column layouts, code execution, and vim-style navigation.
 
-## Quick Start
+## Build, test & lint
 
-```bash
-# Build
-make build
-
-# Run with example
-make run
-
-# Install globally
-make install
-
-# Test
-go test ./... -count=1
-
-# Lint
-golangci-lint run ./...
-
-# Format
-gofmt -l -w .
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for build, run, test, and lint commands.
 
 ## Architecture
 

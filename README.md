@@ -120,6 +120,10 @@ footer: "{author} | {current_slide}/{total_slides}"
 ---
 ```
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## License
 
 MIT
