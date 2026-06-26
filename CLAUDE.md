@@ -1,6 +1,6 @@
-@CONTRIBUTING.md
-
 # deck
+
+@CONTRIBUTING.md
 
 Terminal slide presenter built with [Bubbletea v2](https://charm.land/bubbletea). Present markdown files as navigable slide decks with live hot reload, progressive reveal, column layouts, code execution, and vim-style navigation.
 
