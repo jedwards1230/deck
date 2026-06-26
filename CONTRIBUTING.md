@@ -32,6 +32,10 @@ golangci-lint run ./...
 gofmt -l -w .
 ```
 
+## Documentation
+
+Keep documentation current as part of the change, not as a follow-up — update the README and any affected docs in the same PR. A new flag, command, or frontmatter field should be reflected in the README and, where it changes the walkthrough, the embedded `tutorial.md`.
+
 ## Before you open a PR
 
 - Make sure all CI checks pass locally first — run the formatter, linter, and tests.
