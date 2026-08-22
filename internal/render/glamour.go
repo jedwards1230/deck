@@ -3,8 +3,8 @@ package render
 import (
 	"sync"
 
-	"github.com/charmbracelet/glamour/v2"
-	"github.com/charmbracelet/glamour/v2/styles"
+	"charm.land/glamour/v2"
+	"charm.land/glamour/v2/styles"
 )
 
 // glamourGutter is the internal padding glamour adds to rendered content.
