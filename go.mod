@@ -4,9 +4,9 @@ go 1.26.0
 
 require (
 	charm.land/bubbletea/v2 v2.0.7
+	charm.land/glamour/v2 v2.0.1
 	charm.land/lipgloss/v2 v2.0.4
 	github.com/atotto/clipboard v0.1.4
-	github.com/charmbracelet/glamour/v2 v2.0.0-20251106195642-800eb8175930
 	github.com/fsnotify/fsnotify v1.10.1
 	gopkg.in/yaml.v3 v3.0.1
 )
