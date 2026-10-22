@@ -3,7 +3,7 @@ FROM ubuntu:26.04
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG GO_VERSION=1.26.0
+ARG GO_VERSION=1.26.10
 ARG GOLANGCI_LINT_VERSION=v2.10.1
 ARG TARGETARCH=amd64
 

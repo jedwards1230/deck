@@ -8,7 +8,7 @@
 
 set +e  # Never exit on error in session-start
 
-GO_VERSION="1.26.0"
+GO_VERSION="1.26.10"
 GOLANGCI_LINT_VERSION="v2.11.3"
 ARCH="$(uname -m)"
 case "$ARCH" in
